@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx nodemon src/server.ts --watch 'src/' -e ts",
+    "dev": "nodemon src/server.ts",
     "build": "npx tsc",
     "start": "node ./dist/server.js"
   },
@@ -16,19 +16,23 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/r4monn/order-management-challenge/issues"
   },
   "homepage": "https://github.com/r4monn/order-management-challenge#readme",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.2.1"
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.0.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "nodemon": "^3.1.11"
   }
 }
