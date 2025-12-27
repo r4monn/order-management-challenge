@@ -211,4 +211,79 @@ describe('OrderService - Business Logic', () => {
         });
     });
 
+    describe('Order Pagination', () => {
+        beforeEach(async () => {
+            // Criar múltiplos pedidos
+            for (let i = 0; i < 15; i++) {
+                await orderService.createOrder({
+                    lab: `Lab ${i}`,
+                    patient: `Patient ${i}`,
+                    customer: `Customer ${i}`,
+                    services: [{ name: `Service ${i}`, value: 100 }],
+                } as any, userId);
+            }
+        });
+
+        it('should paginate orders correctly', async () => {
+            const result = await orderService.getOrders({ page: 1, limit: 10 }, userId);
+
+            expect(result.data).toHaveLength(10);
+            expect(result.page).toBe(1);
+            expect(result.limit).toBe(10);
+            expect(result.total).toBe(15);
+            expect(result.totalPages).toBe(2);
+        });
+
+        it('should paginate to second page correctly', async () => {
+            const result = await orderService.getOrders({ page: 2, limit: 10 }, userId);
+
+            expect(result.data).toHaveLength(5);
+            expect(result.page).toBe(2);
+            expect(result.limit).toBe(10);
+            expect(result.total).toBe(15);
+            expect(result.totalPages).toBe(2);
+        });
+
+        it('should filter by state', async () => {
+            // Avançar alguns pedidos para ANALYSIS
+            const orders = await Order.find({ createdBy: userId });
+
+            // Verificar se há pedidos suficientes
+            expect(orders.length).toBeGreaterThanOrEqual(2);
+
+            await orderService.advanceOrder(orders[0]!._id.toString(), userId);
+            await orderService.advanceOrder(orders[1]!._id.toString(), userId);
+
+            const result = await orderService.getOrders({
+                page: 1,
+                limit: 10,
+                state: 'ANALYSIS'
+            }, userId);
+
+            expect(result.data.length).toBeGreaterThan(0);
+            expect(result.data.every(o => o.state === 'ANALYSIS')).toBe(true);
+        });
+
+        it('should return empty array when no orders match filter', async () => {
+            const result = await orderService.getOrders({
+                page: 1,
+                limit: 10,
+                state: 'COMPLETED'
+            }, userId);
+
+            expect(result.data).toHaveLength(0);
+            expect(result.total).toBe(0);
+        });
+
+        it('should use default pagination values', async () => {
+            const result = await orderService.getOrders({
+                page: 0,
+                limit: 0
+            }, userId);
+
+            expect(result.page).toBe(1);
+            expect(result.limit).toBe(10);
+            expect(result.data).toHaveLength(10);
+        });
+    });
 });
