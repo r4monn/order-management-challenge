@@ -34,6 +34,32 @@ export const OrderController = {
     }
   },
 
+  async advanceOrder(req: AuthRequest, res: Response) {
+    try {
+      const { id: orderId } = req.params;
+      const userId = req.user!.userId;
+
+      if (!orderId) {
+        res.status(400).json({ error: 'Order ID is required' });
+        return;
+      }
+
+      if (!userId) {
+        res.status(401).json({ error: 'User not authenticated' });
+        return;
+      }
+
+      const updatedOrder = await orderService.advanceOrder(orderId, userId);
+
+      res.status(200).json({
+        message: 'Order advanced successfully',
+        order: updatedOrder
+      });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
   async getOrders(req: AuthRequest, res: Response) {
     try {
       const userId = req.user!.userId;

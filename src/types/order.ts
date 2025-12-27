@@ -14,6 +14,7 @@ export interface IOrder {
 }
 
 export interface IService {
+  toObject(): any;
   name: string;
   value: number;
   status: 'PENDING' | 'DONE';

@@ -8,5 +8,6 @@ router.use(authenticate);
 
 router.post('/', OrderController.createOrder);
 router.get('/', OrderController.getOrders);
+router.patch('/:id/advance', OrderController.advanceOrder);
 
 export default router;
