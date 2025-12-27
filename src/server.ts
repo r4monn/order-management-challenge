@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './database.js';
 import authRoutes from './routes/auth.routes.js';
+import orderRoutes from './routes/order.routes.js';
 
 var app = express();
 dotenv.config();
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/auth', authRoutes);
+app.use('/orders', orderRoutes);
 
 app.use("/", (req: Request, res: Response, next: NextFunction) => {
   res.send("Hello World");
